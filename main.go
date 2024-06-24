@@ -8,21 +8,31 @@ import (
 
 func main() {
 	r := yumu.New()
-	r.GET("/", func(c *yumu.Context) {
-		c.HTML(http.StatusOK, "<h1>Hello Yumu</h1>")
+	r.GET("/index", func(ctx *yumu.Context) {
+		ctx.HTML(http.StatusOK, "<h1>Index Page</h1>")
 	})
-	r.GET("/hello", func(c *yumu.Context) {
-		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
-	})
-	r.GET("/hello/:name", func(c *yumu.Context) {
-		c.String(http.StatusOK, "hello %s,you're at %s\n", c.Param("name"), c.Path)
-	})
-	r.POST("/login", func(c *yumu.Context) {
-		c.JSON(http.StatusOK, yumu.H{
-			"username": c.PostForm("username"),
-			"password": c.PostForm("password"),
+	v1 := r.Group("/v1")
+	{
+		v1.GET("/", func(ctx *yumu.Context) {
+			ctx.HTML(http.StatusOK, "<h1>Hello Yumu</h1>")
 		})
-	})
+
+		v1.GET("/hello", func(ctx *yumu.Context) {
+			ctx.String(http.StatusOK, "hello %s,you're at %s\n", ctx.Query("name"), ctx.Path)
+		})
+	}
+	v2 := r.Group("/v2")
+	{
+		v2.GET("/hello/:name", func(ctx *yumu.Context) {
+			ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Param("name"), ctx.Path)
+		})
+		v2.POST("/login", func(ctx *yumu.Context) {
+			ctx.JSON(http.StatusOK, yumu.H{
+				"username": ctx.PostForm("username"),
+				"password": ctx.PostForm("password"),
+			})
+		})
+	}
 	r.Run(":8888")
 
 }
