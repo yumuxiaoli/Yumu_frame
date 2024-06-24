@@ -14,6 +14,9 @@ func main() {
 	r.GET("/hello", func(c *yumu.Context) {
 		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
 	})
+	r.GET("/hello/:name", func(c *yumu.Context) {
+		c.String(http.StatusOK, "hello %s,you're at %s\n", c.Param("name"), c.Path)
+	})
 	r.POST("/login", func(c *yumu.Context) {
 		c.JSON(http.StatusOK, yumu.H{
 			"username": c.PostForm("username"),
